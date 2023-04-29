@@ -1,0 +1,6 @@
+{
+  "Kind": "WebApps",
+  "Name": "Security",
+  "ImageName": "webapps-security",
+  "DockerFile": "DockerFile.Release"
+}

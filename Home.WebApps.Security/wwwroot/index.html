@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sec App</title>
+    <script src="scripts/jquery-3.5.1.min.js"></script>
+    <script src="scripts/angular.min.js"></script>
+    <script src="scripts/angular-sanitize.min.js"></script>
+    <script src="scripts/angular-animate.min.js"></script>
+    <script src="scripts/signalr.min.js"></script>
+    <script src="/common/manoir.js"></script>
+    <script src="SecurityApp.js"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="main.css" rel="stylesheet" />
+    <link href="/common/manoir.css" rel="stylesheet" />
+
+    <meta name="viewport" content="initial-scale=1;width:device-width" />
+
+</head>
+<body ng-app="SecurityApp" ng-controller="DefaultPage" ng-class="currentPresence!=null && currentPresence.privacyModeActivated?'privacy-mode-activated':'no-privacy-mode'">
+
+    <manoir-menu-bar></manoir-menu-bar>
+
+    <main class="full-background">
+
+        <manoir-menu-button></manoir-menu-button>
+        <manoir-header></manoir-header>
+
+        <img class="img-back" src="streamline-icon-bird-house.png" ng-show="currentPresence!=null && !currentPresence.privacyModeActivated" />
+        <img class="img-back" src="streamline-icon-lock-4.png" ng-show="currentPresence!=null && currentPresence.privacyModeActivated" />
+
+        <section class="defaultPage">
+            <div class="loading-message" ng-show="Loading">...</div>
+            <div class="no-one-home-message" ng-show="!Loading && currentPresence!=null && currentPresence.mainUsers.length==0 && currentPresence.guests.length==0"><img src="streamline-icon-bird-house.png" /><p>Aucune présence</p></div>
+            <div ng-show="currentPresence!=null">
+                <h2 ng-show="currentPresence.mainUsers.length>0">Famille</h2>
+                <ul class="user-list">
+                    <li ng-repeat="main in currentPresence.mainUsers" ng-click="Events.startRemovePresence(main)">
+                        <img class="avatar" ng-src="{{main.imageUrl}}" />
+                        <div class="name">
+                            <p class="userId" ng-bind="main.userId"></p>
+                            <p class="userName" ng-bind="main.userName"></p>
+                            <p class="userFirstName" ng-bind="main.userFirstName"></p>
+                        </div>
+                    </li>
+                </ul>
+                <h2 ng-show="currentPresence.guests.length>0">Invités</h2>
+
+                <ul class="user-list">
+                    <li ng-repeat="guest in currentPresence.guests" ng-click="Events.startRemovePresence(guest)">
+                        <img class="avatar" ng-src="{{guest.imageUrl}}" />
+                        <div class="name">
+                            <p class="userId" ng-bind="guest.userId"></p>
+                            <p class="userName" ng-bind="guest.userName"></p>
+                            <p class="userFirstName" ng-bind="guest.userFirstName"></p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <section class="add-overlay" ng-show="isAdding">
+        <div class="background"></div>
+        <div class="content">
+
+            <ul class="user-list">
+                <li ng-repeat="user in allUsers" ng-click="Events.addPresence(user)"
+                    ng-class="user.alreadyPresent?'present':'not-present'">
+                    <img class="avatar" ng-src="{{user.avatar.urlSquareSmall}}" />
+                    <div class="name">
+                        <p class="userId" ng-bind="user.id"></p>
+                        <p class="userName" ng-bind="user.name"></p>
+                        <p class="userFirstName" ng-bind="user.firstName"></p>
+                    </div>
+                </li>
+            </ul>
+            <button class="stop-add-presence" ng-click="Events.stopAddPresence()">Annuler</button>
+
+
+        </div>
+    </section>
+
+
+    <section class="remove-overlay" ng-show="currentSelectedPresence!=null">
+        <div class="background"></div>
+        <div class="content">
+            <div class="user-list">
+                <img class="avatar" ng-src="{{currentSelectedPresence.imageUrl}}" />
+                <div class="name">
+                    <p class="userId" ng-bind="currentSelectedPresence.userId"></p>
+                    <p class="userName" ng-bind="currentSelectedPresence.userName"></p>
+                    <p class="userFirstName" ng-bind="currentSelectedPresence.userFirstName"></p>
+                </div>
+            </div>
+
+            <button class="do-remove-presence" ng-click="Events.removePresence(currentSelectedPresence)">Déclarer parti(e)</button>
+            <button class="stop-remove-presence" ng-click="Events.stopRemovePresence()">Annuler</button>
+        </div>
+    </section>
+
+    <footer>
+        <nav>
+            <button class="add-presence" ng-click="Events.startAddPresence()">
+                <img src="streamline-icon-interface-user-add.png" /><span>Ajouter une personne</span>
+            </button>
+        </nav>
+    </footer>
+
+
+    <script>
+        console.log(window.localStorage.getItem("test"));
+    </script>
+</body>
+</html>
